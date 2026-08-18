@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Housing Watch</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">NYC OPEN DATA · HPD HOUSING MAINTENANCE VIOLATIONS</div>
+  <h1>Housing <span>Watch</span></h1>
+  <div class="tagline">Introduce una dirección y entérate al instante qué tan grave es la situación de un edificio: cuántas violaciones siguen abiertas, cuáles son las más peligrosas primero, y dónde están los puntos calientes de violaciones en toda la ciudad.</div>
+
+  <form class="search-panel" id="search-form">
+    <input type="text" name="house" placeholder="Núm." required>
+    <input type="text" name="street" placeholder="Nombre de la calle (ej. West 125 Street)" required>
+    <select name="borough" required>
+      <option value="">Borough</option>
+      <option value="MANHATTAN">Manhattan</option>
+      <option value="BROOKLYN">Brooklyn</option>
+      <option value="BRONX">Bronx</option>
+      <option value="QUEENS">Queens</option>
+      <option value="STATEN ISLAND">Staten Island</option>
+    </select>
+    <button type="submit">Buscar edificio</button>
+  </form>
+  <div class="search-hint">Datos vía tu backend local (backend/). Prueba: 123 · West 125 Street · Manhattan</div>
+</header>
+
+<div id="status-banner"></div>
+
+<main>
+  <section class="report-col" id="report-col">
+    <div class="empty-state" id="empty-state">
+      <div class="big">Ningún edificio consultado todavía</div>
+      Escribe una dirección arriba para ver su reporte de violaciones abiertas, ordenadas de más a menos grave.
+    </div>
+  </section>
+
+  <section class="map-col">
+    <div class="map-caption" id="map-caption">🔴 Puntos rojos = violaciones Clase C (peligro inmediato) abiertas recientes en toda la ciudad. 🟠 Naranja = Clase B.</div>
+    <div id="map"></div>
+    <div class="legend">
+      <div><span class="dot a"></span>Class A — Low concern</div>
+      <div><span class="dot b"></span>Class B — Hazardous</div>
+      <div><span class="dot c"></span>Class C — Immediately hazardous</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Fuente: NYC Open Data — Open HPD Violations (csn4-vhvf). Este frontend habla solo con tu backend (backend/); las claves de Socrata y Geoclient viven en backend/.env y nunca se exponen aquí.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
