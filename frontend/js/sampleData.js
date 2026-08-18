@@ -1,6 +1,6 @@
 // frontend/js/sampleData.js
-// Se usa únicamente si el backend no responde, para que la UI nunca
-// se quede vacía durante una demo o mientras configuras las claves.
+// Used only if the backend doesn't respond, so the UI is never
+// left empty during a demo or while you're setting up your keys.
 
 export function sampleHotspotData() {
   const seeds = [
@@ -20,10 +20,10 @@ export function sampleHotspotData() {
 
 export function sampleViolationsForDemo() {
   return [
-    { class: 'C', currentstatus: 'OPEN', apartment: '4B', inspectiondate: '2026-06-02T00:00:00.000', novdescription: 'FALTA DE CALEFACCIÓN - NO SE PROPORCIONÓ CALOR ADECUADO' },
-    { class: 'C', currentstatus: 'OPEN', apartment: '2A', inspectiondate: '2026-05-14T00:00:00.000', novdescription: 'PELIGRO DE INCENDIO - ESCALERA DE INCENDIOS BLOQUEADA' },
-    { class: 'B', currentstatus: 'OPEN', apartment: '3F', inspectiondate: '2026-04-30T00:00:00.000', novdescription: 'FUGA DE AGUA EN EL TECHO DEL BAÑO' },
-    { class: 'B', currentstatus: 'OPEN', apartment: null, inspectiondate: '2026-03-11T00:00:00.000', novdescription: 'PINTURA DESCASCARADA EN ÁREAS COMUNES' },
-    { class: 'A', currentstatus: 'OPEN', apartment: '1C', inspectiondate: '2026-02-20T00:00:00.000', novdescription: 'MOSQUITERO DE VENTANA FALTANTE' }
+    { class: 'C', currentstatus: 'OPEN', apartment: '4B', inspectiondate: '2026-06-02T00:00:00.000', novdescription: 'LACK OF HEAT - FAILURE TO PROVIDE ADEQUATE HEAT' },
+    { class: 'C', currentstatus: 'OPEN', apartment: '2A', inspectiondate: '2026-05-14T00:00:00.000', novdescription: 'FIRE HAZARD - FIRE ESCAPE BLOCKED' },
+    { class: 'B', currentstatus: 'OPEN', apartment: '3F', inspectiondate: '2026-04-30T00:00:00.000', novdescription: 'WATER LEAK IN BATHROOM CEILING' },
+    { class: 'B', currentstatus: 'OPEN', apartment: null, inspectiondate: '2026-03-11T00:00:00.000', novdescription: 'PEELING PAINT IN COMMON AREAS' },
+    { class: 'A', currentstatus: 'OPEN', apartment: '1C', inspectiondate: '2026-02-20T00:00:00.000', novdescription: 'MISSING WINDOW SCREEN' }
   ];
 }

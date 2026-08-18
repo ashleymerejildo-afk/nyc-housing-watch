@@ -15,7 +15,7 @@ function hideBanner() {
 
 initMap();
 loadHotspots(() => {
-  showBanner('⚠ No se pudo conectar con el backend para el mapa citywide. ¿Está corriendo "npm start" en backend/? Mostrando datos de muestra mientras tanto.');
+  showBanner('⚠ Could not connect to the backend for the citywide map. Is "npm start" running in backend/? Showing sample data in the meantime.');
 });
 
 document.getElementById('search-form').addEventListener('submit', async (e) => {
@@ -33,10 +33,10 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
   let rows = [];
   try {
     rows = await fetchViolationsForAddress(house, street, borough);
-    if (!Array.isArray(rows)) throw new Error('respuesta inesperada');
+    if (!Array.isArray(rows)) throw new Error('unexpected response');
   } catch (err) {
-    console.warn('Fallo la consulta en vivo, usando datos de muestra:', err);
-    showBanner('⚠ No se pudo conectar con el backend. Revisa que esté corriendo en localhost:3001. Mostrando datos de muestra.');
+    console.warn('Live query failed, using sample data:', err);
+    showBanner('⚠ Could not connect to the backend. Check that it\'s running on localhost:3001. Showing sample data.');
     isDemo = true;
     rows = sampleViolationsForDemo();
   }
@@ -47,6 +47,6 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
     const geo = await geocodeAddress(house, street, borough);
     if (geo) highlightAddress(geo.lat, geo.lon, `<b>${house} ${street}</b><br>${borough}`);
   } catch (err) {
-    console.warn('Geocodificación no disponible:', err);
+    console.warn('Geocoding not available:', err);
   }
 });

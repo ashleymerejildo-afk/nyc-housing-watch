@@ -12,7 +12,7 @@ export function renderReport(addressLabel, rows, isDemo) {
   let html = `
     <div class="addr-heading">${addressLabel}</div>
     <div class="summary-row">
-      <div class="summary-card total"><div class="num">${openRows.length}</div><div class="lbl">Abiertas</div></div>
+      <div class="summary-card total"><div class="num">${openRows.length}</div><div class="lbl">Open</div></div>
       <div class="summary-card a"><div class="num">${counts.A}</div><div class="lbl">Class A</div></div>
       <div class="summary-card b"><div class="num">${counts.B}</div><div class="lbl">Class B</div></div>
       <div class="summary-card c"><div class="num">${counts.C}</div><div class="lbl">Class C</div></div>
@@ -20,13 +20,13 @@ export function renderReport(addressLabel, rows, isDemo) {
   `;
 
   if (openRows.length === 0) {
-    html += `<div class="empty-state"><div class="big">Sin violaciones abiertas</div>No se encontraron violaciones abiertas registradas para esta dirección.</div>`;
+    html += `<div class="empty-state"><div class="big">No open violations</div>No open violations were found on record for this address.</div>`;
   } else {
     openRows.forEach(row => {
       const cls = getClass(row);
-      const desc = pick(row, ['novdescription', 'description']) || 'Descripción no disponible';
+      const desc = pick(row, ['novdescription', 'description']) || 'Description not available';
       const date = pick(row, ['inspectiondate', 'novissueddate']);
-      const dateFmt = date ? new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+      const dateFmt = date ? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
       const status = pick(row, ['currentstatus', 'violationstatus']) || 'OPEN';
       const apt = pick(row, ['apartment', 'apt']);
       const emoji = cls === 'C' ? '🔴' : cls === 'B' ? '🟠' : '🟢';
@@ -38,8 +38,8 @@ export function renderReport(addressLabel, rows, isDemo) {
           </div>
           <div class="vc-desc">${desc}</div>
           <div class="vc-meta">
-            <span><b>Fecha:</b> ${dateFmt}</span>
-            ${apt ? `<span><b>Unidad:</b> ${apt}</span>` : ''}
+            <span><b>Date:</b> ${dateFmt}</span>
+            ${apt ? `<span><b>Unit:</b> ${apt}</span>` : ''}
             <span class="status-pill open">${status}</span>
           </div>
         </div>
@@ -48,7 +48,7 @@ export function renderReport(addressLabel, rows, isDemo) {
   }
 
   if (isDemo) {
-    html = `<div style="font-family:var(--font-mono);font-size:11px;background:#fde3e3;color:#7a1f1f;padding:8px 10px;border-radius:2px;margin-bottom:16px;">⚠ Mostrando datos de muestra: la petición al backend no pudo completarse.</div>` + html;
+    html = `<div style="font-family:var(--font-mono);font-size:11px;background:#fde3e3;color:#7a1f1f;padding:8px 10px;border-radius:2px;margin-bottom:16px;">⚠ Showing sample data: the request to the backend could not be completed.</div>` + html;
   }
 
   col.innerHTML = html;
@@ -56,5 +56,5 @@ export function renderReport(addressLabel, rows, isDemo) {
 
 export function renderLoading() {
   document.getElementById('report-col').innerHTML =
-    `<div class="empty-state"><div class="big">Buscando…</div>Consultando NYC Open Data.</div>`;
+    `<div class="empty-state"><div class="big">Searching…</div>Querying NYC Open Data.</div>`;
 }
