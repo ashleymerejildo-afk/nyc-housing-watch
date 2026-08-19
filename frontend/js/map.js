@@ -8,6 +8,13 @@ const NYC_CENTER = [40.7128, -73.9060];
 let map;
 let hotspotLayer;
 let addressMarker = null;
+let lastHotspotRows = [];
+
+// Exposes the citywide hotspot rows already fetched for the map, so other
+// modules (like insights.js) can reuse them without an extra API call.
+export function getHotspotRows() {
+  return lastHotspotRows;
+}
 
 export function initMap() {
   map = L.map('map', { zoomControl: true }).setView(NYC_CENTER, 10.4);
@@ -32,6 +39,7 @@ export async function loadHotspots(onFallback) {
 }
 
 function renderHotspots(rows) {
+  lastHotspotRows = rows;
   hotspotLayer.clearLayers();
   rows.forEach(row => {
     const lat = getLat(row), lon = getLon(row);

@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -52,6 +53,58 @@
     </div>
   </section>
 </main>
+
+<section class="insights-panel" id="insights-panel">
+  <div class="insights-head">
+    <div>
+      <div class="eyebrow">DATA INSIGHTS</div>
+      <div class="insights-sub">Computed from the open violations returned for this address. Nothing here is estimated or invented.</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <fieldset class="filter-group">
+      <legend>Severity</legend>
+      <label><input type="checkbox" class="f-severity" value="C" checked> C</label>
+      <label><input type="checkbox" class="f-severity" value="B" checked> B</label>
+      <label><input type="checkbox" class="f-severity" value="A" checked> A</label>
+    </fieldset>
+    <label class="filter-group">Type
+      <select class="f-type"><option value="">All types</option></select>
+    </label>
+    <label class="filter-group">From
+      <input type="date" class="f-date-from">
+    </label>
+    <label class="filter-group">To
+      <input type="date" class="f-date-to">
+    </label>
+    <button type="button" class="f-reset">Reset filters</button>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Complaint severity</div>
+      <div class="chart-box"><canvas id="chart-severity"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Violation types</div>
+      <div class="chart-box"><canvas id="chart-type"></canvas></div>
+    </div>
+    <div class="chart-card" id="trend-wrap">
+      <div class="chart-title">Trend over time</div>
+      <div class="chart-box"><canvas id="chart-trend"></canvas></div>
+    </div>
+    <div class="chart-card" id="compare-wrap">
+      <div class="chart-title">Building vs. citywide (Class C share of B/C violations)</div>
+      <div class="chart-box"><canvas id="chart-compare"></canvas></div>
+    </div>
+  </div>
+
+  <div class="insights-text-card">
+    <div class="chart-title">What the data shows</div>
+    <ul id="insights-text"></ul>
+  </div>
+</section>
 
 <footer>
   Source: NYC Open Data — Open HPD Violations (csn4-vhvf). This frontend only talks to your backend (backend/); Socrata and Geoclient keys live in backend/.env and are never exposed here.

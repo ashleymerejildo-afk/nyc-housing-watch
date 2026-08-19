@@ -1,8 +1,12 @@
 // frontend/js/app.js
-import { initMap, loadHotspots, highlightAddress } from './map.js';
+import { initMap, loadHotspots, highlightAddress, getHotspotRows } from './map.js';
 import { fetchViolationsForAddress, geocodeAddress } from './api.js';
 import { renderReport, renderLoading } from './report.js';
 import { sampleViolationsForDemo } from './sampleData.js';
+import { initInsights, updateInsights, setHotspotSource } from './insights.js';
+
+setHotspotSource(getHotspotRows);
+initInsights();
 
 function showBanner(msg) {
   const b = document.getElementById('status-banner');
@@ -41,7 +45,9 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
     rows = sampleViolationsForDemo();
   }
 
-  renderReport(`${house} ${street}, ${borough}`, rows, isDemo);
+  const addressLabel = `${house} ${street}, ${borough}`;
+  renderReport(addressLabel, rows, isDemo);
+  updateInsights(addressLabel, rows, isDemo);
 
   try {
     const geo = await geocodeAddress(house, street, borough);
