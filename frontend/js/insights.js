@@ -70,6 +70,11 @@ function baseChartOptions(extra) {
 }
 
 function renderCharts(rows) {
+  if (typeof Chart === 'undefined') {
+    document.getElementById('insights-panel').insertAdjacentHTML('afterbegin',
+      '<div style="font-family:var(--font-mono);font-size:11px;background:#fde3e3;color:#7a1f1f;padding:8px 10px;border-radius:2px;margin-bottom:16px;">⚠ Chart library failed to load — check your internet connection and reload the page.</div>');
+    return { counts: { A: 0, B: 0, C: 0 }, total: 0, typeEntries: [], monthKeys: [] };
+  }
   const counts = { A: 0, B: 0, C: 0 };
   rows.forEach(r => counts[getClass(r)]++);
   const total = rows.length;
@@ -255,7 +260,7 @@ export function updateInsights(label, rows, isDemo) {
   rawRows = rows.filter(isOpen);
 
   const panel = document.getElementById('insights-panel');
-  panel.style.display = rawRows.length ? '' : 'none';
+  panel.style.display = rawRows.length ? 'block' : 'none';
   if (!rawRows.length) return;
 
   populateTypeFilter(rawRows);

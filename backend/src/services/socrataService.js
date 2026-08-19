@@ -16,7 +16,7 @@ async function fetchViolationsForAddress(house, street, borough) {
   const where =
     `upper(housenumber)='${escapeSoQL(house)}' ` +
     `AND upper(streetname) LIKE '%${escapeSoQL(street)}%' ` +
-    `AND upper(borough)='${escapeSoQL(borough)}'`;
+    `AND upper(boro)='${escapeSoQL(borough)}'`;
 
   const params = new URLSearchParams({
     '$where': where,
