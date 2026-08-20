@@ -14,7 +14,7 @@
 
 <header>
   <div class="eyebrow">NYC OPEN DATA · HPD HOUSING MAINTENANCE VIOLATIONS</div>
-  <h1>Housing <span>Watch</span></h1>
+  <h1>Housing <span>Watch<svg class="watch-icon" width="0.62em" height="0.62em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="16" r="4"/><circle cx="17" cy="16" r="4"/><path d="M10 15h4"/><path d="M9 12V8a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><path d="M11 6V4"/><path d="M13 6V4"/></svg></span></h1>
   <div class="tagline">Enter an address and instantly find out how serious a building's situation is: how many violations are still open, which ones are most dangerous first, and where the citywide violation hotspots are.</div>
 
   <form class="search-panel" id="search-form">
@@ -81,13 +81,18 @@
     <button type="button" class="f-reset">Reset filters</button>
   </div>
 
+  <div class="metric-row" id="metric-row"></div>
+
   <div class="charts-grid">
     <div class="chart-card">
-      <div class="chart-title">Complaint severity</div>
-      <div class="chart-box"><canvas id="chart-severity"></canvas></div>
+      <div class="chart-title">COMPLAINT SEVERITY</div>
+      <div class="chart-box" id="severity-box" style="position:relative;">
+        <canvas id="chart-severity"></canvas>
+        <div class="donut-center-label" id="donut-center"></div>
+      </div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Violation types</div>
+      <div class="chart-title">VIOLATION TYPES</div>
       <div class="chart-box"><canvas id="chart-type"></canvas></div>
     </div>
     <div class="chart-card" id="trend-wrap">

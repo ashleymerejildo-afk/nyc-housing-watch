@@ -63,34 +63,61 @@ function baseChartOptions(extra) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: '#122032', font: { family: 'IBM Plex Sans', size: 11 } } },
-      tooltip: { backgroundColor: '#122032', titleFont: { family: 'IBM Plex Sans' }, bodyFont: { family: 'IBM Plex Sans' } }
+      legend: { labels: { color: '#c7d3dc', font: { family: 'IBM Plex Sans', size: 11 }, usePointStyle: true, pointStyle: 'circle' } },
+      tooltip: { backgroundColor: '#0d1826', borderColor: 'rgba(255,255,255,.15)', borderWidth: 1, titleFont: { family: 'IBM Plex Sans' }, bodyFont: { family: 'IBM Plex Sans' }, padding: 10 }
     }
   }, extra);
+}
+
+function gradientFill(ctx, chartArea, colorStops) {
+  if (!chartArea) return colorStops[colorStops.length - 1][1];
+  const g = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  colorStops.forEach(([stop, color]) => g.addColorStop(stop, color));
+  return g;
+}
+
+function renderMetricRow(counts, total) {
+  const row = document.getElementById('metric-row');
+  row.innerHTML = `
+    <div class="metric-card"><div class="metric-num">${total}</div><div class="metric-lbl">Open Violations</div></div>
+    <div class="metric-card"><div class="metric-num">${counts.A}</div><div class="metric-lbl">Class A · Low</div></div>
+    <div class="metric-card severity-b"><div class="metric-num">${counts.B}</div><div class="metric-lbl">Class B · Hazardous</div></div>
+    <div class="metric-card severity-c"><div class="metric-num">${counts.C}</div><div class="metric-lbl">Class C · Severe</div></div>
+  `;
 }
 
 function renderCharts(rows) {
   if (typeof Chart === 'undefined') {
     document.getElementById('insights-panel').insertAdjacentHTML('afterbegin',
-      '<div style="font-family:var(--font-mono);font-size:11px;background:#fde3e3;color:#7a1f1f;padding:8px 10px;border-radius:2px;margin-bottom:16px;">⚠ Chart library failed to load — check your internet connection and reload the page.</div>');
+      '<div style="font-family:var(--font-mono);font-size:11px;background:rgba(225,69,69,.12);border:1px solid rgba(225,69,69,.3);color:#ff9a8a;padding:8px 10px;border-radius:8px;margin-bottom:16px;">⚠ Chart library failed to load — check your internet connection and reload the page.</div>');
     return { counts: { A: 0, B: 0, C: 0 }, total: 0, typeEntries: [], monthKeys: [] };
   }
   const counts = { A: 0, B: 0, C: 0 };
   rows.forEach(r => counts[getClass(r)]++);
   const total = rows.length;
+  renderMetricRow(counts, total);
 
-  // Severity donut
+  // Severity donut, with a glowing gradient palette + center label
   const sevCtx = document.getElementById('chart-severity');
+  const donutColors = ['#3F7D5C', '#D9812F', '#E14545'];
   chartSeverity = new Chart(sevCtx, {
     type: 'doughnut',
     data: {
       labels: ['Class A — Low', 'Class B — Hazardous', 'Class C — Immediately hazardous'],
-      datasets: [{ data: [counts.A, counts.B, counts.C], backgroundColor: [severityColor.A, severityColor.B, severityColor.C], borderWidth: 0 }]
+      datasets: [{ data: [counts.A, counts.B, counts.C], backgroundColor: donutColors, borderWidth: 3, borderColor: '#0d1826', hoverOffset: 6 }]
     },
-    options: baseChartOptions({ cutout: '62%' })
+    options: baseChartOptions({
+      cutout: '68%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#c7d3dc', font: { family: 'IBM Plex Sans', size: 11 }, usePointStyle: true, pointStyle: 'circle', padding: 14 } }
+      }
+    })
   });
+  const cPct = total ? Math.round((counts.C / total) * 100) : 0;
+  document.getElementById('donut-center').innerHTML =
+    `<div class="num">${cPct}%</div><div class="lbl">Class C</div>`;
 
-  // Type bar
+  // Type bar — gradient fill, sorted worst-first
   const typeCounts = {};
   rows.forEach(r => {
     const desc = pick(r, ['novdescription', 'description']);
@@ -103,14 +130,20 @@ function renderCharts(rows) {
     type: 'bar',
     data: {
       labels: typeEntries.map(e => e[0]),
-      datasets: [{ label: 'Open violations', data: typeEntries.map(e => e[1]), backgroundColor: '#3E7A96', borderRadius: 3, maxBarThickness: 28 }]
+      datasets: [{
+        label: 'Open violations',
+        data: typeEntries.map(e => e[1]),
+        backgroundColor: (context) => gradientFill(context.chart.ctx, context.chart.chartArea, [[0, 'rgba(62,122,150,.35)'], [1, '#4FA3C7']]),
+        borderRadius: 6,
+        maxBarThickness: 26
+      }]
     },
     options: baseChartOptions({
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
-        x: { beginAtZero: true, ticks: { precision: 0, color: '#5a5546' }, grid: { color: '#e7e2d3' } },
-        y: { ticks: { color: '#122032', font: { family: 'IBM Plex Sans', size: 11 } }, grid: { display: false } }
+        x: { beginAtZero: true, ticks: { precision: 0, color: '#8b9aa8' }, grid: { color: 'rgba(255,255,255,.07)' } },
+        y: { ticks: { color: '#c7d3dc', font: { family: 'IBM Plex Sans', size: 11 } }, grid: { display: false } }
       }
     })
   });
@@ -130,13 +163,19 @@ function renderCharts(rows) {
       type: 'line',
       data: {
         labels: monthKeys,
-        datasets: [{ label: 'Violations issued', data: monthKeys.map(k => months[k]), borderColor: '#3E7A96', backgroundColor: 'rgba(62,122,150,0.12)', fill: true, tension: 0.25, pointRadius: 3 }]
+        datasets: [{
+          label: 'Violations issued',
+          data: monthKeys.map(k => months[k]),
+          borderColor: '#D9812F',
+          backgroundColor: (context) => gradientFill(context.chart.ctx, context.chart.chartArea, [[0, 'rgba(217,129,47,0)'], [1, 'rgba(217,129,47,.35)']]),
+          fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#D9812F', pointBorderColor: '#0d1826', pointBorderWidth: 2
+        }]
       },
       options: baseChartOptions({
         plugins: { legend: { display: false } },
         scales: {
-          x: { ticks: { color: '#5a5546', font: { family: 'IBM Plex Mono', size: 10 } }, grid: { display: false } },
-          y: { beginAtZero: true, ticks: { precision: 0, color: '#5a5546' }, grid: { color: '#e7e2d3' } }
+          x: { ticks: { color: '#8b9aa8', font: { family: 'IBM Plex Mono', size: 10 } }, grid: { display: false } },
+          y: { beginAtZero: true, ticks: { precision: 0, color: '#8b9aa8' }, grid: { color: 'rgba(255,255,255,.07)' } }
         }
       })
     });
@@ -168,13 +207,22 @@ function renderComparison(counts, hotspotRows) {
     type: 'bar',
     data: {
       labels: ['This building', 'Citywide sample'],
-      datasets: [{ label: '% Class C among B/C violations', data: [buildingCPct, cityCPct], backgroundColor: ['#BC2A2A', '#8a8272'], borderRadius: 3, maxBarThickness: 46 }]
+      datasets: [{
+        label: '% Class C among B/C violations',
+        data: [buildingCPct, cityCPct],
+        backgroundColor: (context) => {
+          const idx = context.dataIndex;
+          return gradientFill(context.chart.ctx, context.chart.chartArea,
+            idx === 0 ? [[0, 'rgba(225,69,69,.25)'], [1, '#E14545']] : [[0, 'rgba(139,154,168,.2)'], [1, '#8b9aa8']]);
+        },
+        borderRadius: 6, maxBarThickness: 46
+      }]
     },
     options: baseChartOptions({
       plugins: { legend: { display: false } },
       scales: {
-        y: { beginAtZero: true, max: 100, ticks: { color: '#5a5546', callback: v => v + '%' }, grid: { color: '#e7e2d3' } },
-        x: { ticks: { color: '#122032', font: { family: 'IBM Plex Sans', size: 12 } }, grid: { display: false } }
+        y: { beginAtZero: true, max: 100, ticks: { color: '#8b9aa8', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,.07)' } },
+        x: { ticks: { color: '#c7d3dc', font: { family: 'IBM Plex Sans', size: 12 } }, grid: { display: false } }
       }
     })
   });
